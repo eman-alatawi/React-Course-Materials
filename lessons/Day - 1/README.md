@@ -246,9 +246,11 @@ You will get an error if you try to change their value.
       /Movies.js
       /Movie.js  
 ```
-- use this movies list in your app:
+- use this movies list below in your app
+- `MoviesData.js`
 ``` javascript
-{
+const movies = [
+    {
         movie_id: 1,
         title: "The Girl Riding a Bulldozer",
         description:
@@ -272,7 +274,10 @@ You will get an error if you try to change their value.
         release_Date: 2012,
         poster_src: "https://i.mydramalist.com/wOplpf.jpg",
       },
-    ];
+    
+]
+
+export default movies;
 ```
 
 - use styled component for styling using the command below:
