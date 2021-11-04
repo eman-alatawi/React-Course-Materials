@@ -491,7 +491,20 @@ function Meal({ strMeal, strMealThumb, area }) {
 export default Meal;
 ```
 
+- `App.css`
+```css
+.meals-container{
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 2em;
+  align-items: center;
+}
+```
+
 ## Your Turn Now :)
+
+<hr>
 
 - modifiy the code below to Filter the array so you see only the users who are online.
 
@@ -606,7 +619,7 @@ class MyComponent extends React.Component {
 </details>
 
 
-
+<hr>
 
 Additional Resources:
 - [uuid](https://www.npmjs.com/package/uuid)
