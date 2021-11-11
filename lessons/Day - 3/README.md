@@ -408,7 +408,7 @@ Renders the first child `<Route>` that matches the location.
 - `<Switch>` is unique in that it renders a route exclusively. In contrast, every <Route> that matches the location renders inclusively.
 
 ## Your Turn Now :)
-<hr>
+
 
 
 - Update your perivous meals-app using `react router`. Use `<NavBar>` using react bootstrap to Navigate to the Routes.

@@ -504,7 +504,7 @@ export default Meal;
 
 ## Your Turn Now :)
 
-<hr>
+
 
 - modifiy the code below to Filter the array so you see only the users who are online.
 
