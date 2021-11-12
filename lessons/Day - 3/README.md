@@ -413,10 +413,40 @@ Renders the first child `<Route>` that matches the location.
 
 - Update your perivous meals-app using `react router`. Use `<NavBar>` using react bootstrap to Navigate to the Routes.
 
-![meals-route-1](./images/meals-route-1.png)
-![meals-route-2](./images/meals-route-2.png)
-![meals-route-3](./images/meals-route-3.png)
-![meals-route-4](./images/meals-route-4.png)
+- From the `master` branch make a new branch called `meals-router`
+
+```js
+git branch meals-router
+```
+
+- switch to the branch
+```js
+git checkout meals-router
+```
+
+![meals-route-1](./images/meals-r-1.png)
+![meals-route-2](./images/meals-r-2.png)
+![meals-route-3](./images/meals-r-3.png)
+![meals-route-4](./images/meals-r-4.png)
+
+- Your app sturcture should look like this:
+
+```
+/meals-app
+   /src
+    /App.js
+    /App.css
+    /index.js
+    /mealsData.js
+    /components
+      /Meals.js
+      /NavBar.js
+      /AllMeals.js
+      /MoroccanMeals.js
+      /SpanishMeals.js
+      /TurkishMeals.js
+      /Meal.js  
+```
 
 - The`NavBar` contains `Meals`, `Moroccan`, `Spanish`, `Turkish` nav links.
 
@@ -438,12 +468,14 @@ Renders the first child `<Route>` that matches the location.
   
 - `index.js`
  ```js
- import React from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router} from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
+
 
 ReactDOM.render(
   <Router>
@@ -451,12 +483,34 @@ ReactDOM.render(
   </Router>,
   document.getElementById('root')
 );
- ```
 
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
+
+ ```
+- `App.js`
+```js
+import Meals from './components/Meals';
+import './App.css';
+
+
+function App() {
+  return (
+    <div style={{ backgroundColor: '#f6f7f9', padding: '1rem'}}>
+      <Meals/>
+    </div>
+  );
+}
+
+export default App;
+
+```
 - `Meals.js`
 ```js
 import React from "react";
-import Navbar from "../components/NavBar";
+import Navbar from "./Navbar";
 import { meals } from "../mealsData";
 import { Route, Switch } from "react-router-dom";
 import MoroccanMeals from "./MoroccanMeals";
@@ -502,7 +556,7 @@ import Container from "react-bootstrap/Container";
 
 function NavBar() {
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="dark" expand="lg">
       <Container>
         <Navbar.Brand>
           <Link to="/"> Meals</Link>
@@ -529,7 +583,6 @@ function NavBar() {
 }
 
 export default NavBar;
-
 ```
 
 - `AllMeals.js`
@@ -638,7 +691,7 @@ function Meal({ strMeal, strMealThumb, area }) {
     <Card
       style={{
         width: "18rem",
-        height: "27rem",
+        height: "30rem",
         boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
         textAlign: "center",
       }}
@@ -647,15 +700,16 @@ function Meal({ strMeal, strMealThumb, area }) {
       <Card.Body>
         <Card.Title>{strMeal}</Card.Title>
         <Card.Text>
-          {area === "Spanish" ? <strong>{area}</strong> : <em>{area}</em>}
+          <em>{area}</em>
         </Card.Text>
-        {area === "Moroccan" && <Button variant="warning" onClick={clickHandler}>Order Now</Button>}
+        <Button variant="warning" onClick={clickHandler}>Order Now</Button>
       </Card.Body>
     </Card>
   );
 }
 
 export default Meal;
+
 
 ```
 

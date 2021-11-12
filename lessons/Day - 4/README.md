@@ -124,27 +124,160 @@ import { useEffect } from "react";
 
 ## Practice Time (extends Meals App Using UseStete Hook)
 
+- From the `meals-router` branch make a new branch called `meals-hooks`
 
-![meals-hook-1](./images/1.png)
-![meals-hook-2](./images/2.png)
-![meals-hook-3](./images/3.png)
+```js
+git branch meals-hooks
+```
 
+- switch to the branch
+```js
+git checkout meals-hooks
+```
+
+![meals-hook-1](./images/meals-hook-1.png)
+![meals-hook-2](./images/meals-hook-2.png)
+![meals-hook-3](./images/meals-hook-3.png)
+
+- Your app sturcture should look like this:
+
+```
+/meals-app
+   /src
+    /App.js
+    /App.css
+    /index.js
+    /mealsData.js
+    /components
+      /Meals.js
+      /NavBar.js
+      /AllMeals.js
+      /MoroccanMeals.js
+      /SpanishMeals.js
+      /TurkishMeals.js
+      /Meal.js  
+```
+- Add the CDN Fontawsome icons in `index.html` into the `head` section
+```html
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+
+```
+
+
+- `mealsData.js`
+
+```js
+export const meals = [
+    {
+        strMeal: "Tahini Lentils",
+        strMealThumb:
+            "https://www.themealdb.com/images/media/meals/vpxyqt1511464175.jpg",
+        idMeal: "52869",
+        area: "Moroccan",
+        price: 20
+    },
+    {
+        strMeal: "Roast fennel and aubergine paella",
+        strMealThumb: "https://www.themealdb.com/images/media/meals/1520081754.jpg",
+        idMeal: "52942",
+        area: "Spanish",
+        price: 18
+    },
+    {
+        strMeal: "Corba",
+        strMealThumb:
+            "https://www.themealdb.com/images/media/meals/58oia61564916529.jpg",
+        idMeal: "52977",
+        area: "Turkish",
+        price: 14
+    },
+    {
+        strMeal: "Seafood fideuà",
+        strMealThumb:
+            "https://www.themealdb.com/images/media/meals/wqqvyq1511179730.jpg",
+        idMeal: "52836",
+        area: "Spanish",
+        price: 24
+    },
+
+    {
+        strMeal: "Kumpir",
+        strMealThumb:
+            "https://www.themealdb.com/images/media/meals/mlchx21564916997.jpg",
+        idMeal: "52978",
+        area: "Turkish",
+        price: 8
+    },
+    {
+        strMeal: "Chicken Couscous",
+        strMealThumb:
+            "https://www.themealdb.com/images/media/meals/qxytrx1511304021.jpg",
+        idMeal: "52850",
+        area: "Moroccan",
+        price: 11
+    },
+    {
+        strMeal: "Spanish Tortilla",
+        strMealThumb:
+            "https://www.themealdb.com/images/media/meals/quuxsx1511476154.jpg",
+        idMeal: "52872",
+        area: "Spanish",
+        price: 22
+    },
+    {
+        strMeal: "Moroccan Carrot Soup",
+        strMealThumb: "https://www.themealdb.com/images/media/meals/jcr46d1614763831.jpg",
+        idMeal: "53047",
+        area: "Moroccan",
+        price: 10
+    },
+];
+
+```
 - `Meals.js`
 
 ```js
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import Navbar from "./Navbar";
 import { meals } from "../mealsData";
-import Meal from "./Meal";
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
-import Button from "react-bootstrap/Button";
-import Badge from 'react-bootstrap/Badge'
+import { Route, Switch } from "react-router-dom";
+import MoroccanMeals from "./MoroccanMeals";
+import AllMeals from "./AllMeals";
+import TurkishMeals from "./TurkishMeals";
+import SpanishMeals from "./SpanishMeals";
 
 function Meals() {
+    const [allMeals, setAllMeals] = useState(meals)
+    const [turkishMeals, setTurkishMeals] = useState([])
+    const [moroccanMeals, setMoroccanMeals] = useState([])
+    const [spanishMeals, setSpanishMeals] = useState([])
 
-  const [mealsList, setmMealsList] = useState(meals)
-  const [selectedArea, setSelectedArea] = useState('All Meals')
-  const [totalOrders, setTotalOrders] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(0);
+    const [totalOrders, setTotalOrders] = useState(0);
+    const [totalPrice, setTotalPrice] = useState(0);
+
+
+    useEffect(() => {
+        turkishMealsHandler();
+        moroccanMealsHandler();
+        spanishMealsHandler();
+
+    }, [])
+
+  const turkishMealsHandler = () => {
+    const filterdTurkishMeals = meals.filter((meal) => meal.area === "Turkish");
+    setTurkishMeals(filterdTurkishMeals)
+
+  }
+
+  const moroccanMealsHandler = () => {
+    const filterdMoroccanMeals = meals.filter((meal) => meal.area === "Moroccan");
+    setMoroccanMeals(filterdMoroccanMeals)
+  }
+
+  const spanishMealsHandler = () => {
+    const filterdSpanishMeals = meals.filter((meal) => meal.area === "Spanish");
+    setSpanishMeals(filterdSpanishMeals)
+  }
 
   useEffect(() => {
     setTotalPrice(t => t * (1 + 0.15))
@@ -152,146 +285,174 @@ function Meals() {
   }, [totalOrders])
 
 
+    return (
+        <>
+            <Navbar totalOrders={totalOrders} totalPrice={totalPrice} />
 
-
-  const Meals = mealsList.map((meal) => <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice} />);
-
-  const allMealsHandler = (e) => {
-    setmMealsList(meals)
-    setSelectedArea(e.target.value)
-  }
-
-  const turkishMealsHandler = (e) => {
-    const filterdTurkishMeals = meals.filter((meal) => meal.area === "Turkish");
-    setmMealsList(filterdTurkishMeals)
-    setSelectedArea(e.target.value)
-
-  }
-
-  const moroccanMealsHandler = (e) => {
-    const filterdMoroccanMeals = meals.filter((meal) => meal.area === "Moroccan");
-    setmMealsList(filterdMoroccanMeals)
-    setSelectedArea(e.target.value)
-  }
-
-  const spanishMealsHandler = (e) => {
-    const filterdSpanishMeals = meals.filter((meal) => meal.area === "Spanish");
-    setmMealsList(filterdSpanishMeals)
-    setSelectedArea(e.target.value)
-  }
-  const mystyle = {
-    display: "grid",
-    padding: "2rem",
-    gridTemplateColumns: "1fr 1fr 1fr 1fr",
-    gridGap: "2rem",
-    alignItems: "center"
-  };
-
-  const badgeStyle = {
-    transform: 'translate(-1rem,-1rem)'
-  }
-
-  return (
-    <>
-      <div className="d-flex flex-row justify-content-center align-items-center py-3">
-        <ButtonGroup className="mb-2 me-3">
-          <Button variant="secondary" onClick={allMealsHandler} value="All Meals">All</Button>
-          <Button variant="warning" onClick={turkishMealsHandler} value="Turkish Meals">Turkish</Button>
-          <Button variant="warning" onClick={moroccanMealsHandler} value="Moroccan Meals">Moroccan</Button>
-          <Button variant="warning" onClick={spanishMealsHandler} value="Spanish Meals">Spanish</Button>
-        </ButtonGroup>
-        <p><i className="fas fa-shopping-cart fa-lg"></i> <Badge pill bg="info" style={badgeStyle}>{totalOrders}</Badge>
-        <i className="fas fa-wallet fa-lg"></i><Badge pill bg="info" style={badgeStyle}>$ {totalPrice.toFixed(2)}</Badge>
-          </p>
-      </div>
-      <h2 className="text-center mt-5">{selectedArea}</h2>
-      <div style={mystyle}>{Meals}</div>
-    </>
-  );
+            <Switch>
+                <Route exact path="/">
+                    <AllMeals meals={allMeals} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
+                </Route>
+                <Route path="/moroccan">
+                    <MoroccanMeals meals={moroccanMeals} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
+                </Route>
+                <Route path="/turkish">
+                    <TurkishMeals meals={turkishMeals} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
+                </Route>
+                <Route path="/spanish">
+                    <SpanishMeals meals={spanishMeals} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
+                </Route>
+            </Switch>
+        </>
+    );
 }
 
 export default Meals;
-
 ```
 
-- `mealsData.js`
+- `Navbar.js`
 
 ```js
-export const meals = [
-  {
-    strMeal: "Tahini Lentils",
-    strMealThumb:
-      "https://www.themealdb.com/images/media/meals/vpxyqt1511464175.jpg",
-    idMeal: "52869",
-    area: "Moroccan",
-    price: 20
-  },
-  {
-    strMeal: "Roast fennel and aubergine paella",
-    strMealThumb: "https://www.themealdb.com/images/media/meals/1520081754.jpg",
-    idMeal: "52942",
-    area: "Spanish",
-    price: 18
-  },
-  {
-    strMeal: "Corba",
-    strMealThumb:
-      "https://www.themealdb.com/images/media/meals/58oia61564916529.jpg",
-    idMeal: "52977",
-    area: "Turkish",
-    price: 14
-  },
-  {
-    strMeal: "Seafood fideuà",
-    strMealThumb:
-      "https://www.themealdb.com/images/media/meals/wqqvyq1511179730.jpg",
-    idMeal: "52836",
-    area: "Spanish",
-    price: 24
-  },
+import React from "react";
+import { Link } from "react-router-dom";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import Container from "react-bootstrap/Container";
+import Badge from 'react-bootstrap/Badge'
+function NavBar({totalOrders, totalPrice}) {
+    const badgeStyle = {
+        transform: 'translate(-1rem,-1rem)'
+    }
 
-  {
-    strMeal: "Kumpir",
-    strMealThumb:
-      "https://www.themealdb.com/images/media/meals/mlchx21564916997.jpg",
-    idMeal: "52978",
-    area: "Turkish",
-    price: 8
-  },
-  {
-    strMeal: "Chicken Couscous",
-    strMealThumb:
-      "https://www.themealdb.com/images/media/meals/qxytrx1511304021.jpg",
-    idMeal: "52850",
-    area: "Moroccan",
-    price: 11
-  },
-  {
-    strMeal: "Spanish Tortilla",
-    strMealThumb:
-      "https://www.themealdb.com/images/media/meals/quuxsx1511476154.jpg",
-    idMeal: "52872",
-    area: "Spanish",
-    price: 22
-  },
-];
+  return (
+    <Navbar bg="dark" expand="lg">
+      <Container>
+        <Navbar.Brand>
+          <Link to="/"> Meals</Link>
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link>
+              {" "}
+              <Link to="/moroccan"> Moroccan</Link>
+            </Nav.Link>
+            <Nav.Link>
+              <Link to="/spanish"> Spanish</Link>
+            </Nav.Link>
+            <Nav.Link>
+              {" "}
+              <Link to="/turkish"> Turkish</Link>
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+        <p><i className="fas fa-shopping-cart fa-lg"></i> <Badge pill bg="info" style={badgeStyle}>{totalOrders}</Badge>
+        <i className="fas fa-wallet fa-lg"></i><Badge pill bg="info" style={badgeStyle}>$ {totalPrice.toFixed(2)}</Badge>
+          </p>
+      </Container>
+    </Navbar>
+  );
+}
+
+export default NavBar;
+```
+
+- `AllMeals.js`
+```js
+import React from "react";
+import Meal from "./Meal";
+
+function AllMeals({ meals, setTotalOrders, setTotalPrice }) {
+  const allMeals = meals.map((meal) => <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>);
+  return (
+    <div>
+      <h2>All Meals</h2>
+      <div className="cards-container">{allMeals}</div>
+    </div>
+  );
+}
+
+export default AllMeals;
+```
+
+- `MoroccanMeals.js`
+```js
+import React from "react";
+import Meal from "./Meal";
+
+function MoroccanMeals({ meals, setTotalOrders, setTotalPrice }) {
+  const moroccanMeals = meals.filter((meal) => meal.area === "Moroccan");
+
+  const moroccanItems = moroccanMeals.map((meal) => (
+    <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
+  ));
+  return (
+    <div>
+      <h2>Moroccan Meals</h2>
+      <div className="cards-container">{moroccanItems}</div>
+    </div>
+  );
+}
+
+export default MoroccanMeals;
+```
+
+- `TurkishMeals.js`
+```js
+import React from "react";
+import Meal from "./Meal";
+
+function TurkishMeals({ meals, setTotalOrders, setTotalPrice }) {
+  const turkishMeals = meals.filter((meal) => meal.area === "Turkish");
+
+  const turkishItems = turkishMeals.map((meal) => (
+    <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
+  ));
+
+  return (
+    <div>
+      <h2>Turkish Meals</h2>
+      <div className="cards-container">{turkishItems}</div>
+    </div>
+  );
+}
+
+export default TurkishMeals;
+```
+
+- `SpanishMeals.js`
+```js
+import React from "react";
+import Meal from "./Meal";
+
+function SpanishMeals({ meals, setTotalOrders, setTotalPrice }) {
+  const spanishMeals = meals.filter((meal) => meal.area === "Spanish");
+
+  const spanishItems = spanishMeals.map((meal) => (
+    <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
+  ));
+
+  return (
+    <div>
+      <h2>Spanish Meals </h2>
+      <div className="cards-container">{spanishItems}</div>
+    </div>
+  );
+}
+
+export default SpanishMeals;
 
 ```
 
 - `Meal.js`
-
 ```js
+import React from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 
-function Meal({
-  strMeal,
-  strMealThumb,
-  area,
-  price,
-  setTotalOrders,
-  setTotalPrice,
-}) {
+function Meal({ strMeal, strMealThumb, area, price, setTotalOrders, setTotalPrice }) {
+
+
   return (
     <Card
       style={{
@@ -323,7 +484,51 @@ function Meal({
 }
 
 export default Meal;
+
 ```
+
+
+- `App.css`
+```css
+.meals-container {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 2em;
+  align-items: center;
+}
+
+.cards-container {
+  display: grid;
+  padding: 2rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 2rem;
+  align-items: center;
+}
+
+h2 {
+  text-align: center;
+  padding-top: 3rem;
+  color: rgb(44, 46, 46);
+}
+
+a {
+  text-decoration: none !important;
+  color: rgb(255, 255, 255) !important;
+  margin-right: 2rem;
+}
+
+a:hover {
+  color: rgb(255, 227, 17) !important;
+}
+
+i{
+  color: white;
+}
+
+```
+
+<hr>
 
 Additional Resources:
 - [react-hooks w3school](https://www.w3schools.com/react/react_hooks.asp)
