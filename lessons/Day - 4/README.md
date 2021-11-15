@@ -1,143 +1,128 @@
-## React Hooks
 
-Hooks allow function components to have access to state and other React features. Because of this, class components are generally no longer needed.
+## React Router:
+React Router is a third party library that makes it easy for us to route URLs - not to different pages, but by dynamically loading different components on the same page as the user navigates to different URLs. Once we define how the URLs are routed to the components, React Router will manage our Single Page App's browser history automatically.
 
-### What Can State Hold?
-The `useState` Hook can be used to keep track of `strings`, `numbers`, `booleans`, `arrays`, `objects`, and any combination of these!
-
-We could create multiple state Hooks to track individual values.
-
-### Hook Rules:
-There are 3 rules for hooks:
-
-- Hooks can only be called inside React function components.
-- Hooks can only be called at the top level of a component.
-- Hooks cannot be conditional.
-
-#### Note: `Hooks` will `not work` in React `class` components.
-
-### 1- `useState` Hook:
-The React `useState Hook` allows us to `track state in a function component.`
-
-`State`: generally refers to `data or properites that need to be tracking in an application.`
-
-#### Import `useState`:
-To use the `useState` Hook, we first need to `import` it into our component.
+### Installing React Router:
 ```js
-import { useState } from "react";
+npm i react-router-dom@5.3.0
 ```
 
-#### Initialize useState:
-We initialize our state by calling `useState` in our function component.
+React Router uses some of its own components to define how URLs are routed to your components and to create links to those routes. 
+- You must have one `<Router>` component that wraps itself around multiple `<Route>` components. Each `<Route>` component has two pieces:
 
-`useState` accepts an `initial state` and returns two values:
-
-- The current state.
-- A function that updates the state.
+- `path` - defining the URL path that leads to the component.
+- `component` - defining what component users will see when they navigate to the path.
 
 ```js
-import { useState } from "react";
 
-function FavoriteColor() {
-  const [color, setColor] = useState("");
-}
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from 'react-router-dom';
 
-```
+import Home from './Home'
+import Menu from './Menu';
+import AboutUs from './AboutUs';
 
-- The first value, `color`, is our `current state`.
-- The second value, `setColor`, is the `fuction that is used to update our state`.
-- we set the `initial state` to an `empty string, useState("")`
-
-#### Read State:
-We can now include our state anywhere in our component.
-
-```js
-import { useState } from "react";
-
-function FavoriteColor() {
-  const [color, setColor] = useState("");
-   return <h1>My favorite color is {color}!</h1>
-}
-
-```
-
-#### Update State:
-To update our state, we use our state updater function.
-
-```js
-import { useState } from "react";
-
-function FavoriteColor() {
-  const [color, setColor] = useState("red");
-
+export default function App() {
   return (
-    <>
-      <h1>My favorite color is {color}!</h1>
-      <button
-        type="button"
-        onClick={() => setColor("blue")}
-      >Blue</button>
-    </>
-  )
+    <Router>
+     <nav>
+        <Link to="/">Home</Link>
+        <Link to="/menu">Menu</Link>
+        <Link to="/aboutUs">About Us</Link>
+      </nav>
+
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route path="/menu" component={Menu} />
+        <Route path="/aboutUs" component={AboutUs} />
+      </Switch>
+    </Router>
+  );
 }
 ```
 
-### 2- useEffect Hook:
-The `useEffect` Hook allows you to perform `side effects in your components.`
+### important things to note here:
 
-Some examples of side effects are: `fetching data`, `directly updating the DOM`, and `timers`.
+- This goes in place of your existing component calls of `<Home />` or `<Home></Home>` (depending on which syntax you went for).
 
-useEffect accepts `two arguments`. The `second argument is optional`.
+- The first route for the homepage at the root URL path `/ ` uses a special extra `exact` attribute before defining the path. The `exact` attribute means the component associated with the route will only be shown if users are at exactly that URL path. If you forget to include the exact keyword, when someone navigates to `/aboutUs` they will actually see two components, because `/` is a partial match for /aboutUs.
 
-`useEffect(<function>, <dependency>)`
+- Notice that all of the `<Route>` components are wrapped inside one `<div>`. Like render, the `<Router>` element can only have one direct child element. If you don't wrap the routes with a `<div>`, the page will appear blank.
 
-- Think of useEffect Hook as componentDidMount, componentDidUpdate, and componentWillUnmount combined together into one function
+- The Router component is actually called `BrowserRouter` inside the library package, but we'll use the `as` keyword to rename it to `Router` so it's easier to remember.
 
-#### Import `useEffect`:
+- You can wrap the `App` component inside ` <Router>` element in `index.js` to make the access available to all the child components.
+
+    ```js
+    import {BrowserRouter as Router} from 'react-router-dom'
+    ReactDOM.render(
+        <Router>
+            <App />
+        </Router>,
+    document.getElementById('root')
+    );
+    ```
+
+### Navigate to the Routes:
+
+we can wrap `<Link>` tags around whatever text that we want to display to the user to click on. The pieces of this are:
+
+`<Link>` : creates `<a>` tags and automatically integrates modern HTML5 browser history mechanics for the Single Page Application. It has one attribute:
+- `to`: what path to navigate to when the user clicks the link.
+
+We can include those links in a `<nav>` element at the top of our page. It will stay on the page permanently, and the different components will be swapped between each other below it.
+
+### Pass props through React Router:
+
 ```js
-import { useEffect } from "react";
+const menuArray = [
+  'chicken',
+  'Tea',
+  'Cola',
+  'Soup'
+]
 ```
 
-#### Three ways to pass dependency in `useEffect`:
+There is many ways to do this like:
 
-  - 1- No dependency passed:
-    ```js
-        useEffect(() => {
-         //Runs on every render
-        });
+- ```js
+    <Route path="/menu" component={() => <Menu menuArray={menuArray}/>} />
     ```
 
-  - 2- An empty array:
-    ```js
-       useEffect(() => {
-        //Runs only on the first render
-       }, []);
+- ```js
+    <Route path="/menu" >
+        <Menu menuArray={menuArray}>
+    </Route>
     ```
-  - 3- Props or state values:
-    ```js
-       useEffect(() => {
-        //Runs on the first render
-       //And any time any dependency value changes
-       }, [prop, state]);
-    ```
+### Switch:
+Renders the first child `<Route>` that matches the location.
+- `<Switch>` is unique in that it renders a route exclusively. In contrast, every <Route> that matches the location renders inclusively.
+
+## Your Turn Now :)
 
 
-## Practice Time (extends Meals App Using UseStete Hook)
 
-- From the `meals-router` branch make a new branch called `meals-hooks`
+- Update your perivous meals-app using `react router`. Use `<NavBar>` using react bootstrap to Navigate to the Routes.
+
+- From the `master` branch make a new branch called `meals-router`
 
 ```js
-git branch meals-hooks
+git branch meals-router
 ```
 
 - switch to the branch
 ```js
-git checkout meals-hooks
+git checkout meals-router
 ```
 
-![meals-hook-1](./images/meals-hook-1.png)
-![meals-hook-2](./images/meals-hook-2.png)
-![meals-hook-3](./images/meals-hook-3.png)
+![meals-route-1](./images/meals-r-1.png)
+![meals-route-2](./images/meals-r-2.png)
+![meals-route-3](./images/meals-r-3.png)
+![meals-route-4](./images/meals-r-4.png)
 
 - Your app sturcture should look like this:
 
@@ -157,87 +142,69 @@ git checkout meals-hooks
       /TurkishMeals.js
       /Meal.js  
 ```
-- Add the CDN Fontawsome icons in `index.html` into the `head` section
-```html
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
 
-```
+- The`NavBar` contains `Meals`, `Moroccan`, `Spanish`, `Turkish` nav links.
+
+  - `Meals`: to show all meals. make `AllMeals.js` component.
+
+  - `Moroccan`: to show moroccan meals. make `MoroccanMeals.js` component.
+
+  - `Spanish`: to show spanish meals. make `SpanishMeals.js` component.
+
+  - `Turkish`: to show turkish meals. make `TurkishMeals.js` component.
+
+- Make an Event handler for the `Order Now` button, when clicked show this message `Thank You for ordering <strMeal>` on alert box.
+
+![meals-alert](./images/meals-click.png)
 
 
-- `mealsData.js`
+<details>
+  <summary>Solution</summary>
+  
+- `index.js`
+ ```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router } from 'react-router-dom'
 
+
+ReactDOM.render(
+  <Router>
+    <App />
+  </Router>,
+  document.getElementById('root')
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
+
+ ```
+- `App.js`
 ```js
-export const meals = [
-    {
-        strMeal: "Tahini Lentils",
-        strMealThumb:
-            "https://www.themealdb.com/images/media/meals/vpxyqt1511464175.jpg",
-        idMeal: "52869",
-        area: "Moroccan",
-        price: 20
-    },
-    {
-        strMeal: "Roast fennel and aubergine paella",
-        strMealThumb: "https://www.themealdb.com/images/media/meals/1520081754.jpg",
-        idMeal: "52942",
-        area: "Spanish",
-        price: 18
-    },
-    {
-        strMeal: "Corba",
-        strMealThumb:
-            "https://www.themealdb.com/images/media/meals/58oia61564916529.jpg",
-        idMeal: "52977",
-        area: "Turkish",
-        price: 14
-    },
-    {
-        strMeal: "Seafood fideuà",
-        strMealThumb:
-            "https://www.themealdb.com/images/media/meals/wqqvyq1511179730.jpg",
-        idMeal: "52836",
-        area: "Spanish",
-        price: 24
-    },
+import Meals from './components/Meals';
+import './App.css';
 
-    {
-        strMeal: "Kumpir",
-        strMealThumb:
-            "https://www.themealdb.com/images/media/meals/mlchx21564916997.jpg",
-        idMeal: "52978",
-        area: "Turkish",
-        price: 8
-    },
-    {
-        strMeal: "Chicken Couscous",
-        strMealThumb:
-            "https://www.themealdb.com/images/media/meals/qxytrx1511304021.jpg",
-        idMeal: "52850",
-        area: "Moroccan",
-        price: 11
-    },
-    {
-        strMeal: "Spanish Tortilla",
-        strMealThumb:
-            "https://www.themealdb.com/images/media/meals/quuxsx1511476154.jpg",
-        idMeal: "52872",
-        area: "Spanish",
-        price: 22
-    },
-    {
-        strMeal: "Moroccan Carrot Soup",
-        strMealThumb: "https://www.themealdb.com/images/media/meals/jcr46d1614763831.jpg",
-        idMeal: "53047",
-        area: "Moroccan",
-        price: 10
-    },
-];
+
+function App() {
+  return (
+    <div style={{ backgroundColor: '#f6f7f9', padding: '1rem'}}>
+      <Meals/>
+    </div>
+  );
+}
+
+export default App;
 
 ```
 - `Meals.js`
-
 ```js
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Navbar from "./Navbar";
 import { meals } from "../mealsData";
 import { Route, Switch } from "react-router-dom";
@@ -247,67 +214,30 @@ import TurkishMeals from "./TurkishMeals";
 import SpanishMeals from "./SpanishMeals";
 
 function Meals() {
-    const [allMeals, setAllMeals] = useState(meals)
-    const [turkishMeals, setTurkishMeals] = useState([])
-    const [moroccanMeals, setMoroccanMeals] = useState([])
-    const [spanishMeals, setSpanishMeals] = useState([])
+  return (
+    <>
+      <Navbar />
 
-    const [totalOrders, setTotalOrders] = useState(0);
-    const [totalPrice, setTotalPrice] = useState(0);
-
-
-    useEffect(() => {
-        turkishMealsHandler();
-        moroccanMealsHandler();
-        spanishMealsHandler();
-
-    }, [])
-
-  const turkishMealsHandler = () => {
-    const filterdTurkishMeals = meals.filter((meal) => meal.area === "Turkish");
-    setTurkishMeals(filterdTurkishMeals)
-
-  }
-
-  const moroccanMealsHandler = () => {
-    const filterdMoroccanMeals = meals.filter((meal) => meal.area === "Moroccan");
-    setMoroccanMeals(filterdMoroccanMeals)
-  }
-
-  const spanishMealsHandler = () => {
-    const filterdSpanishMeals = meals.filter((meal) => meal.area === "Spanish");
-    setSpanishMeals(filterdSpanishMeals)
-  }
-
-  useEffect(() => {
-    setTotalPrice(t => t * (1 + 0.15))
-
-  }, [totalOrders])
-
-
-    return (
-        <>
-            <Navbar totalOrders={totalOrders} totalPrice={totalPrice} />
-
-            <Switch>
-                <Route exact path="/">
-                    <AllMeals meals={allMeals} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
-                </Route>
-                <Route path="/moroccan">
-                    <MoroccanMeals meals={moroccanMeals} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
-                </Route>
-                <Route path="/turkish">
-                    <TurkishMeals meals={turkishMeals} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
-                </Route>
-                <Route path="/spanish">
-                    <SpanishMeals meals={spanishMeals} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
-                </Route>
-            </Switch>
-        </>
-    );
+      <Switch>
+        <Route exact path="/">
+          <AllMeals meals={meals} />
+        </Route>
+        <Route path="/moroccan">
+          <MoroccanMeals meals={meals} />
+        </Route>
+        <Route path="/turkish">
+          <TurkishMeals meals={meals} />
+        </Route>
+        <Route path="/spanish">
+          <SpanishMeals meals={meals} />
+        </Route>
+      </Switch>
+    </>
+  );
 }
 
 export default Meals;
+
 ```
 
 - `Navbar.js`
@@ -318,12 +248,8 @@ import { Link } from "react-router-dom";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import Container from "react-bootstrap/Container";
-import Badge from 'react-bootstrap/Badge'
-function NavBar({totalOrders, totalPrice}) {
-    const badgeStyle = {
-        transform: 'translate(-1rem,-1rem)'
-    }
 
+function NavBar() {
   return (
     <Navbar bg="dark" expand="lg">
       <Container>
@@ -346,9 +272,6 @@ function NavBar({totalOrders, totalPrice}) {
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
-        <p><i className="fas fa-shopping-cart fa-lg"></i> <Badge pill bg="info" style={badgeStyle}>{totalOrders}</Badge>
-        <i className="fas fa-wallet fa-lg"></i><Badge pill bg="info" style={badgeStyle}>$ {totalPrice.toFixed(2)}</Badge>
-          </p>
       </Container>
     </Navbar>
   );
@@ -362,8 +285,8 @@ export default NavBar;
 import React from "react";
 import Meal from "./Meal";
 
-function AllMeals({ meals, setTotalOrders, setTotalPrice }) {
-  const allMeals = meals.map((meal) => <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>);
+function AllMeals({ meals }) {
+  const allMeals = meals.map((meal) => <Meal key={meal.idMeal} {...meal} />);
   return (
     <div>
       <h2>All Meals</h2>
@@ -373,6 +296,7 @@ function AllMeals({ meals, setTotalOrders, setTotalPrice }) {
 }
 
 export default AllMeals;
+
 ```
 
 - `MoroccanMeals.js`
@@ -380,11 +304,11 @@ export default AllMeals;
 import React from "react";
 import Meal from "./Meal";
 
-function MoroccanMeals({ meals, setTotalOrders, setTotalPrice }) {
+function MoroccanMeals({ meals }) {
   const moroccanMeals = meals.filter((meal) => meal.area === "Moroccan");
 
   const moroccanItems = moroccanMeals.map((meal) => (
-    <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
+    <Meal key={meal.idMeal} {...meal} />
   ));
   return (
     <div>
@@ -395,6 +319,7 @@ function MoroccanMeals({ meals, setTotalOrders, setTotalPrice }) {
 }
 
 export default MoroccanMeals;
+
 ```
 
 - `TurkishMeals.js`
@@ -402,11 +327,11 @@ export default MoroccanMeals;
 import React from "react";
 import Meal from "./Meal";
 
-function TurkishMeals({ meals, setTotalOrders, setTotalPrice }) {
+function TurkishMeals({ meals }) {
   const turkishMeals = meals.filter((meal) => meal.area === "Turkish");
 
   const turkishItems = turkishMeals.map((meal) => (
-    <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
+    <Meal key={meal.idMeal} {...meal} />
   ));
 
   return (
@@ -418,6 +343,7 @@ function TurkishMeals({ meals, setTotalOrders, setTotalPrice }) {
 }
 
 export default TurkishMeals;
+
 ```
 
 - `SpanishMeals.js`
@@ -425,11 +351,11 @@ export default TurkishMeals;
 import React from "react";
 import Meal from "./Meal";
 
-function SpanishMeals({ meals, setTotalOrders, setTotalPrice }) {
+function SpanishMeals({ meals }) {
   const spanishMeals = meals.filter((meal) => meal.area === "Spanish");
 
   const spanishItems = spanishMeals.map((meal) => (
-    <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
+    <Meal key={meal.idMeal} {...meal} />
   ));
 
   return (
@@ -450,8 +376,11 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 
-function Meal({ strMeal, strMealThumb, area, price, setTotalOrders, setTotalPrice }) {
+function Meal({ strMeal, strMealThumb, area }) {
 
+  function clickHandler (){
+    alert(`Thank You for ordering ${strMeal}`)
+  }
 
   return (
     <Card
@@ -466,24 +395,16 @@ function Meal({ strMeal, strMealThumb, area, price, setTotalOrders, setTotalPric
       <Card.Body>
         <Card.Title>{strMeal}</Card.Title>
         <Card.Text>
-          <em>{area}</em> <br />
-          <span style={{ color: "red" }}>${price}</span>
+          <em>{area}</em>
         </Card.Text>
-        <Button
-          variant="warning"
-          onClick={() => {
-            setTotalOrders((c) => c + 1);
-            setTotalPrice((p) => p + price);
-          }}
-        >
-          Order Now
-        </Button>
+        <Button variant="warning" onClick={clickHandler}>Order Now</Button>
       </Card.Body>
     </Card>
   );
 }
 
 export default Meal;
+
 
 ```
 
@@ -514,26 +435,21 @@ h2 {
 
 a {
   text-decoration: none !important;
-  color: rgb(255, 255, 255) !important;
+  color: rgb(154, 37, 24) !important;
   margin-right: 2rem;
 }
 
 a:hover {
-  color: rgb(255, 227, 17) !important;
+  color: rgb(226, 61, 43) !important;
 }
-
-i{
-  color: white;
-}
-
 ```
+</details>
+
 
 <hr>
 
 Additional Resources:
-- [react-hooks w3school](https://www.w3schools.com/react/react_hooks.asp)
-
-
-
-
+- [react-router-dom](https://www.npmjs.com/package/react-router-dom/v/5.3.0)
+- [react bootstrap](https://react-bootstrap.netlify.app/)
+- [reactrouter - quick start](https://reactrouter.com/web/guides/quick-start)
 
