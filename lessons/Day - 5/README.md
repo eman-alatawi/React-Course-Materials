@@ -264,18 +264,18 @@ function Meals() {
     }, [])
 
   const turkishMealsHandler = () => {
-    const filterdTurkishMeals = meals.filter((meal) => meal.area === "Turkish");
+    const filterdTurkishMeals = allMeals.filter((meal) => meal.area === "Turkish");
     setTurkishMeals(filterdTurkishMeals)
 
   }
 
   const moroccanMealsHandler = () => {
-    const filterdMoroccanMeals = meals.filter((meal) => meal.area === "Moroccan");
+    const filterdMoroccanMeals = allMeals.filter((meal) => meal.area === "Moroccan");
     setMoroccanMeals(filterdMoroccanMeals)
   }
 
   const spanishMealsHandler = () => {
-    const filterdSpanishMeals = meals.filter((meal) => meal.area === "Spanish");
+    const filterdSpanishMeals = allMeals.filter((meal) => meal.area === "Spanish");
     setSpanishMeals(filterdSpanishMeals)
   }
 
