@@ -60,14 +60,14 @@ git branch meals-crud
 git checkout meals-crud
 ```
 
-![meals-crud-1](./images/meals-crud-1.png)
-![meals-crud-2](./images/meals-crud-2.png)
-![meals-crud-3](./images/meals-crud-3.png)
-![meals-crud-4](./images/meals-crud-4.png)
-![meals-crud-5](./images/meals-crud-5.png)
-![meals-crud-6](./images/meals-crud-6.png)
-![meals-crud-7](./images/meals-crud-7.png)
-![meals-crud-8](./images/meals-crud-8.png)
+![meals-crud](./images/meals-crud-1.png)
+![meals-crud](./images/meals-crud-2.png)
+![meals-crud](./images/meals-crud-3.png)
+![meals-crud](./images/meals-crud-4.png)
+![meals-crud](./images/meals-crud-5.png)
+![meals-crud](./images/meals-crud-6.png)
+![meals-crud](./images/meals-crud-7.png)
+![meals-crud](./images/meals-crud-8.png)
 
 
 
