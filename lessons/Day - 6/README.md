@@ -60,14 +60,14 @@ git branch meals-crud
 git checkout meals-crud
 ```
 
-![meals-crud](./images/meals-crud-1.png)
-![meals-crud](./images/meals-crud-2.png)
-![meals-crud](./images/meals-crud-3.png)
-![meals-crud](./images/meals-crud-4.png)
-![meals-crud](./images/meals-crud-5.png)
-![meals-crud](./images/meals-crud-6.png)
-![meals-crud](./images/meals-crud-7.png)
-![meals-crud](./images/meals-crud-8.png)
+![meals-crud](./images/meals-crud1.png)
+![meals-crud](./images/meals-crud2.png)
+![meals-crud](./images/meals-crud3.png)
+![meals-crud](./images/meals-crud4.png)
+![meals-crud](./images/meals-crud5.png)
+![meals-crud](./images/meals-crud6.png)
+![meals-crud](./images/meals-crud7.png)
+![meals-crud](./images/meals-crud8.png)
 
 
 
@@ -519,7 +519,7 @@ function Meal({
           variant="warning"
           onClick={() => {
             setTotalOrders((c) => c + 1);
-            setTotalPrice((p) => p + parseInt(price));
+            setTotalPrice((p) => p + price);
           }}
         >
           Order Now
