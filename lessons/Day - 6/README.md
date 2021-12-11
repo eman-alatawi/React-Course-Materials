@@ -137,22 +137,38 @@ import EditMeal from "./EditMeal";
 import Swal from "sweetalert2";
 
 function Meals() {
+
+  //(childern)اللي راح يتم استخدامها بواسطة ال(sates) هنا يتم تعريف كل ال
+  
+  // وداخلها راح نضيف/نعدل/نحذف(states) علشان تصير هي الاساس واللي راح نشتق منها باقي ال(state)نحتاج هذه ال
   const [allMeals, setAllMeals] = useState(meals);
+
+  //   تحتوي على الوجبات التركية(state) هذه ال
   const [turkishMeals, setTurkishMeals] = useState([]);
+
+  //   تحتوي على الوجبات المغربية(state) هذه ال
   const [moroccanMeals, setMoroccanMeals] = useState([]);
+
+  //   تحتوي على الوجبات الاسبانية(state) هذه ال
   const [spanishMeals, setSpanishMeals] = useState([]);
 
+  //  (card)تحتوي على الوجبة اللي راح يختارها اليوزر علشان يعدل فيها / اذا ضغط ايقونه التعديل على ال    (state) هذه ال
   const [selectedMeal, setSelectedMeal] = useState({});
 
+  //     تتغير order nowعلى مجموع الطلبات اللي طلبها اليوزر / كل مايضغط على زر  (state) هذه ال
   const [totalOrders, setTotalOrders] = useState(0);
+  
+  //     تتغير order nowعلى مجموع الاسعار للطلبات اللي طلبها اليوزر / كل مايضغط على زر  (state) هذه ال
   const [totalPrice, setTotalPrice] = useState(0);
 
+  // (مثلا لو اليوزر ضاف وجبة جديده/حذف/او عدل بيانات) لانه تراقب التغييرات عليها allMeals state  يعني اول مايصير رندر للكومبوننت راح تشتغل ، كمان لو تغيرت قيمة ال componentDidUpdate() + componentDidMount()تشتغل مثل عمل 
   useEffect(() => {
     turkishMealsHandler();
     moroccanMealsHandler();
     spanishMealsHandler();
   }, [allMeals]);
 
+  //فانكشن تعمل فلتر على كل الوجبات علشان ترجع الوجبات التركية بس وتضيفها داخل الاستيت المناسبه
   const turkishMealsHandler = () => {
     const filterdTurkishMeals = allMeals.filter(
       (meal) => meal.area === "Turkish"
@@ -160,6 +176,7 @@ function Meals() {
     setTurkishMeals(filterdTurkishMeals);
   };
 
+  //فانكشن تعمل فلتر على كل الوجبات علشان ترجع الوجبات المغربية بس وتضيفها داخل الاستيت المناسبه
   const moroccanMealsHandler = () => {
     const filterdMoroccanMeals = allMeals.filter(
       (meal) => meal.area === "Moroccan"
@@ -167,6 +184,7 @@ function Meals() {
     setMoroccanMeals(filterdMoroccanMeals);
   };
 
+  //فانكشن تعمل فلتر على كل الوجبات علشان ترجع الوجبات الاسبانية بس وتضيفها داخل الاستيت المناسبه
   const spanishMealsHandler = () => {
     const filterdSpanishMeals = allMeals.filter(
       (meal) => meal.area === "Spanish"
@@ -174,19 +192,30 @@ function Meals() {
     setSpanishMeals(filterdSpanishMeals);
   };
 
+  // تشتغل اذا تغيرت قيمة الاستيت تبع الطلبات علشان تضيف قيمة ضريبة
   useEffect(() => {
     setTotalPrice((t) => t * (1 + 0.15));
   }, [totalOrders]);
 
-  const handleShowEditForm = (id) => {
+
+  //تبع الوجبة اللي يريد يعدل فيها idفانشكن تشتغل اذا اليوزر ضغط على ايقونة التعديل ، راح تستقبل 
+  //EditMeal.js form لاننا نحتاجها داخل  selectedMeal state  بين الوجبات كلها وبعدين تضيف الوجبة داخل id علشان تبحث عن ال find بعدين راح تستخدم دالة 
+  const handleMealEdit = (id) => {
     const mealToEdit = allMeals.find((meal) => meal.idMeal === id);
     setSelectedMeal(mealToEdit);
   };
 
+  // NewMeal.js form فانكشن تعمل اضافة للوجبة الجديدة اللي ضافها اليوزر في 
+  //يحتوي على تفاصيل الوجبة الجديدة mealتستقبل برامتر عبارة عن اوبجيكت 
   const addNewMeal = (meal) => {
+    //اضافة الوجبة الجديدة اولاً بالاضافه انه نرجع محتويات الاستيت القديمة => مهم 
+    //الوجبة الجديدة تكون اول شي بالاري/ الاستيت
     setAllMeals([meal, ...allMeals]);
   };
 
+  // فانشكن تعمل تعديل لوجبة موجودة مسبقاً ، تشتغل على خطوتين
+  // id ونضيف الجديدة على نفس الid١- تسوي فلتر لكل الوجبات وترجعهم كلهم ماعدا الوجبة الحالية ، طيب ليش؟ لانه حابين نحذف القديمة اللي بنفس ال
+  //٢-  وبعدين نضيفها بالاستيت
   const editMeal = (meal) => {
     const filterdMeals = allMeals.filter(
       (filterdMeal) => filterdMeal.idMeal !== meal.idMeal
@@ -194,6 +223,7 @@ function Meals() {
     setAllMeals([meal, ...filterdMeals]);
   };
 
+  // idفانشكن تحذف الوجبة اذا ضغط اليوزر على ايقونه الحذف ، تحذف بناءً على ال
   const deleteMeal = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -223,7 +253,7 @@ function Meals() {
             meals={allMeals}
             setTotalOrders={setTotalOrders}
             setTotalPrice={setTotalPrice}
-            handleShowEditForm={handleShowEditForm}
+            handleMealEdit={handleMealEdit}
             deleteMeal={deleteMeal}
           />
         </Route>
@@ -232,7 +262,7 @@ function Meals() {
             meals={moroccanMeals}
             setTotalOrders={setTotalOrders}
             setTotalPrice={setTotalPrice}
-            handleShowEditForm={handleShowEditForm}
+            handleMealEdit={handleMealEdit}
             deleteMeal={deleteMeal}
           />
         </Route>
@@ -241,7 +271,7 @@ function Meals() {
             meals={turkishMeals}
             setTotalOrders={setTotalOrders}
             setTotalPrice={setTotalPrice}
-            handleShowEditForm={handleShowEditForm}
+            handleMealEdit={handleMealEdit}
             deleteMeal={deleteMeal}
           />
         </Route>
@@ -250,7 +280,7 @@ function Meals() {
             meals={spanishMeals}
             setTotalOrders={setTotalOrders}
             setTotalPrice={setTotalPrice}
-            handleShowEditForm={handleShowEditForm}
+            handleMealEdit={handleMealEdit}
             deleteMeal={deleteMeal}
           />
         </Route>
