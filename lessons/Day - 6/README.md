@@ -377,9 +377,7 @@ function MoroccanMeals({
   handleShowEditForm,
   deleteMeal,
 }) {
-  const moroccanMeals = meals.filter((meal) => meal.area === "Moroccan");
-
-  const moroccanItems = moroccanMeals.map((meal) => (
+  const moroccanItems = meals.map((meal) => (
     <Meal
       key={meal.idMeal}
       {...meal}
@@ -413,9 +411,7 @@ function TurkishMeals({
   handleShowEditForm,
   deleteMeal,
 }) {
-  const turkishMeals = meals.filter((meal) => meal.area === "Turkish");
-
-  const turkishItems = turkishMeals.map((meal) => (
+  const turkishItems = meals.map((meal) => (
     <Meal
       key={meal.idMeal}
       {...meal}
@@ -450,9 +446,7 @@ function SpanishMeals({
   handleShowEditForm,
   deleteMeal,
 }) {
-  const spanishMeals = meals.filter((meal) => meal.area === "Spanish");
-
-  const spanishItems = spanishMeals.map((meal) => (
+  const spanishItems = meals.map((meal) => (
     <Meal
       key={meal.idMeal}
       {...meal}
@@ -512,7 +506,9 @@ function Meal({
           ></i>
         </Link>
       </div>
-      <Card.Img variant="top" src={strMealThumb} />
+      <div className="img-container">
+      <Card.Img variant="top" src={strMealThumb} className="img"/>
+      </div>
       <Card.Body>
         <Card.Title>{strMeal}</Card.Title>
         <Card.Text>
@@ -614,13 +610,13 @@ function NewMeal(props) {
 
           <Form.Group className="mb-3">
             <Form.Label>Area</Form.Label>{" "}
-            <Form.Control
-              id="area"
-              name="area"
-              type="text"
-              placeholder="Enter Meal Area"
-              onChange={handleChange}
-            />
+            <Form.Select  id="area"
+              name="area" onChange={handleChange}>
+              <option value="">Select Area</option>
+              <option value="Moroccan">Moroccan</option>
+              <option value="Turkish">Turkish</option>
+              <option value="Spanish">Spanish</option>
+            </Form.Select>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -657,13 +653,14 @@ function NewMeal(props) {
             Cancel
           </Button>
         </Form>
-        <img src={imgStr} width="30%" />
+        <img src={imgStr} width="400px" height="300px" />
       </div>
     </Container>
   );
 }
 
 export default withRouter(NewMeal);
+
 
 ```
 - `EditMeal.js`
@@ -741,14 +738,17 @@ function EditMeal(props) {
 
           <Form.Group className="mb-3">
             <Form.Label>Area</Form.Label>{" "}
-            <Form.Control
+            <Form.Select
               id="area"
               name="area"
-              type="text"
               value={meal.area}
-              placeholder="Enter Meal Area"
               onChange={handleChange}
-            />
+            >
+              <option value="">Select Area</option>
+              <option value="Moroccan">Moroccan</option>
+              <option value="Turkish">Turkish</option>
+              <option value="Spanish">Spanish</option>
+            </Form.Select>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -787,13 +787,14 @@ function EditMeal(props) {
             Cancel
           </Button>
         </Form>
-        <img src={imgStr} width="30%" />
+        <img src={imgStr} width="400px" height="300px" />
       </div>
     </Container>
   );
 }
 
 export default withRouter(EditMeal);
+
 
 ```
 
@@ -844,6 +845,16 @@ a#newMeal {
 
 a#newMeal:hover {
   background-color: rgb(255, 204, 0);
+}
+
+.img-container {
+  height: 15rem;
+  width: 100%;
+}
+
+.img {
+  height: 100%;
+  object-fit: cover;
 }
 
 .actions {
