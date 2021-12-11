@@ -381,9 +381,7 @@ import React from "react";
 import Meal from "./Meal";
 
 function MoroccanMeals({ meals, setTotalOrders, setTotalPrice }) {
-  const moroccanMeals = meals.filter((meal) => meal.area === "Moroccan");
-
-  const moroccanItems = moroccanMeals.map((meal) => (
+  const moroccanItems = meals.map((meal) => (
     <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
   ));
   return (
@@ -403,9 +401,8 @@ import React from "react";
 import Meal from "./Meal";
 
 function TurkishMeals({ meals, setTotalOrders, setTotalPrice }) {
-  const turkishMeals = meals.filter((meal) => meal.area === "Turkish");
 
-  const turkishItems = turkishMeals.map((meal) => (
+  const turkishItems = meals.map((meal) => (
     <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
   ));
 
@@ -426,9 +423,7 @@ import React from "react";
 import Meal from "./Meal";
 
 function SpanishMeals({ meals, setTotalOrders, setTotalPrice }) {
-  const spanishMeals = meals.filter((meal) => meal.area === "Spanish");
-
-  const spanishItems = spanishMeals.map((meal) => (
+  const spanishItems = meals.map((meal) => (
     <Meal key={meal.idMeal} {...meal} setTotalOrders={setTotalOrders} setTotalPrice={setTotalPrice}/>
   ));
 
