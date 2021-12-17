@@ -571,9 +571,10 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
-import { withRouter } from "react-router-dom";
+import {useHistory} from 'react-router-dom'
 
 function NewMeal(props) {
+  const history = useHistory()
   const [meal, setMeal] = useState({});
 
   const handleChange = (e) => {
@@ -608,7 +609,7 @@ function NewMeal(props) {
       if (validate()) {
         props.addNewMeal(meal);
         e.target.reset();
-        props.history.push("/");
+        history.push("/");
         Swal.fire(
           "Meal Added!",
           "Congratulations Meal has been added",
@@ -677,7 +678,7 @@ function NewMeal(props) {
           </Button>
           <Button
             variant="secondary"
-            onClick={() => props.history.push("/")}
+            onClick={() => history.push("/")}
             className="mt-3 me-3"
           >
             Cancel
@@ -689,8 +690,7 @@ function NewMeal(props) {
   );
 }
 
-export default withRouter(NewMeal);
-
+export default NewMeal;
 
 ```
 - `EditMeal.js`
@@ -700,9 +700,10 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Swal from "sweetalert2";
-import { withRouter } from "react-router-dom";
+import {useHistory} from 'react-router-dom'
 
 function EditMeal(props) {
+  const history = useHistory()
   const [meal, setMeal] = useState(props.selectedMeal);
 
   const handleChange = (e) => {
@@ -736,7 +737,7 @@ function EditMeal(props) {
       if (validate()) {
         props.editMeal(meal);
         e.target.reset();
-        props.history.push("/");
+        history.push("/");
         Swal.fire(
           "Meal Updated!",
           "Congratulations Meal has been Updated",
@@ -811,7 +812,7 @@ function EditMeal(props) {
           </Button>
           <Button
             variant="secondary"
-            onClick={() => props.history.push("/")}
+            onClick={() => history.push("/")}
             className="mt-3 me-3"
           >
             Cancel
@@ -823,8 +824,7 @@ function EditMeal(props) {
   );
 }
 
-export default withRouter(EditMeal);
-
+export default EditMeal;
 
 ```
 
@@ -923,6 +923,7 @@ form {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 }
 
 .inner-container img {
@@ -931,6 +932,7 @@ form {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
     rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
 }
+
 ```
 
 <hr>
