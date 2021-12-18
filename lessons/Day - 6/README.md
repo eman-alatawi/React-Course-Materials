@@ -549,7 +549,7 @@ function Meal({
           variant="warning"
           onClick={() => {
             setTotalOrders((c) => c + 1);
-            setTotalPrice((p) => p + price);
+            setTotalPrice((p) => p +  parseInt(price));
           }}
         >
           Order Now
@@ -575,13 +575,14 @@ import {useHistory} from 'react-router-dom'
 
 function NewMeal(props) {
   const history = useHistory()
-  const [meal, setMeal] = useState({});
+  const [meal, setMeal] = useState({
+    idMeal: uuidv4()
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMeal({
       ...meal,
-      idMeal: uuidv4(),
       [name]: value,
     });
   };
@@ -602,10 +603,6 @@ function NewMeal(props) {
 
   const submitHandler = (e) => {
     e.preventDefault();
-
-    if (JSON.stringify(meal) === "{}") {
-      Swal.fire("Oops!", "You should add the Meal details first", "warning");
-    } else {
       if (validate()) {
         props.addNewMeal(meal);
         e.target.reset();
@@ -616,7 +613,6 @@ function NewMeal(props) {
           "success"
         );
       }
-    }
   };
 
   const imgStr = meal.strMealThumb
@@ -932,6 +928,7 @@ form {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
     rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
 }
+
 
 ```
 
