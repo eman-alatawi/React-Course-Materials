@@ -207,8 +207,9 @@ export default App;
 Additional Resources:
 
 - [Styled Components ](https://styled-components.com/)
+- [picsum.photos API](https://picsum.photos/)
 - [Public API ](https://github.com/public-apis/public-apis)
-- [Fetch API](https://medium.com/@9cv9official/what-are-get-post-put-patch-delete-a-walkthrough-with-javascripts-fetch-api-17be31755d28)
+- [Fetch API Article](https://medium.com/@9cv9official/what-are-get-post-put-patch-delete-a-walkthrough-with-javascripts-fetch-api-17be31755d28)
 
 - [uigradients](https://uigradients.com/#CrimsonTide)
 - [css box shadow](https://getcssscan.com/css-box-shadow-examples)
