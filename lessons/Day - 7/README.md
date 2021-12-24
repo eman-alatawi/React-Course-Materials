@@ -46,7 +46,8 @@ const Main = () => {
 ```
 - `useContext(MyThemeContext)` only lets you `read the context and subscribe to its changes.`
 
-  
+ ## React Hook Form
+ Performant, flexible and extensible forms with easy-to-use validation.
 ## Practice Time (Online Car Rental System Project - 2)
 
 - Using Context concept implement CRUD App.
@@ -82,6 +83,12 @@ const Main = () => {
 ```
 - Make a `forms` to Add/Edit Cars.
 - Make `Add`/`Edit`/`Delete` Functionalities.
+
+- Create react app using the command:
+  ```js
+  npx create-react-app@latest car-rental-app
+  ```
+
 - Use `uuid` to generate an id when creating new Meal.
 
   - install:
@@ -109,20 +116,38 @@ const Main = () => {
   ```
 
 - Add the CDN Fontawsome icons in `index.html` into the `head` section
-```html
+  ```html
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
 
-```
+  ```
 
 - Use react bootstrap for rapid design
   - instaltion:
     ```
-     npm install react-bootstrap bootstrap
+    npm install react-bootstrap bootstrap
     ```
   - In the index.js (the root component) add the import below:
     ```
      import 'bootstrap/dist/css/bootstrap.min.css';
      ```
+
+- Use React Router dom v5.3.0:
+  - instaltion:
+  ```js
+   npm i react-router-dom@5.3.0
+  ```
+
+- Use React Hook Form:
+  - instaltion:
+  ```js
+   npm install react-hook-form
+  ```
+
+### Shorthand command to install all the npm packages needed: 
+```js
+npm install uuid sweetalert2 react-bootstrap bootstrap react-router-dom@5.3.0 react-hook-form
+```
+
 - `index.js`
 
 ```js
@@ -147,13 +172,13 @@ ReactDOM.render(
 - `App.js`
 
 ```js
-import logo from "./logo.svg";
 import "./App.css";
 import NavBar from "./components/NavBar";
 import { Route, Switch } from "react-router-dom";
 import CarsList from "./components/CarsList";
 import { CarProvider } from "./components/CarContext";
 import NewCar from "./components/NewCar";
+import EditCar from "./components/EditCar";
 
 function App() {
   return (
@@ -167,22 +192,29 @@ function App() {
       <Switch>
         <Route exact path="/" component={CarsList} />
         <Route path="/newCar" component={NewCar} />
+        <Route path="/EditCar" component={EditCar} />
       </Switch>
     </CarProvider>
   );
 }
 
 export default App;
-
 ```
 
 - `CarContext.js`
 ```js
 import React, { useState, createContext } from "react";
+import Swal from "sweetalert2";
 
+//1- Initializing Context
 export const CarContext = createContext();
 
+//2- Providing Context
 export const CarProvider = (props) => {
+  // state contains the car being selected for update
+  const [selectCar, setSelectCar] = useState({});
+
+  //state contains list of cars with default values
   const [cars, setCars] = useState([
     {
       id: "ba452134-5a70-4530-b76f-965724953b1c",
@@ -222,8 +254,50 @@ export const CarProvider = (props) => {
     },
   ]);
 
+  //ADD NEW CAR
+  const newCarHandler = (newCar) =>{
+    setCars([newCar, ...cars]);
+    Swal.fire(
+      "Car Added!",
+      "Congratulations your car has been added in our cars list ",
+      "success"
+    );
+  }
+
+  //UPDATE CAR
+  const updateCarHandler = (updatedCar) =>{
+    const filterdCars = cars.filter(
+      (filterdCar) => filterdCar.id !== updatedCar.id
+    );
+    setCars([updatedCar, ...filterdCars]);
+    Swal.fire(
+      "Car Edited!",
+      "Congratulations your car has been Edited successfully ",
+      "success"
+    );
+  }
+
+  //DELETE CAR
+  const deleteCarHandler = (carId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const filterdCars = cars.filter((car) => car.id !== carId);
+        setCars(filterdCars);
+        Swal.fire("Deleted!", "The selected Car has been deleted.", "success");
+      }
+    });
+  };
+
   return (
-    <CarContext.Provider value={[cars, setCars]}>
+    <CarContext.Provider value={{carsList : [cars, setCars], selectedCar : [selectCar, setSelectCar], newCarHandler, updateCarHandler, deleteCarHandler}}>
       {props.children}
     </CarContext.Provider>
   );
@@ -258,125 +332,75 @@ function NavBar() {
     </Navbar>
   );
 }
-
 export default NavBar;
-
 ```
 
 - `CarsList.js`
 ```js
-import React, { useState, useContext} from "react";
+import React, {useContext} from "react";
 import CarCard from "./CarCard";
 import Container from "react-bootstrap/Container";
 import { CarContext } from "./CarContext";
-import Swal from "sweetalert2";
 import Footer from "./Footer";
-import EditCar from "./EditCar";
-
 
 export default function CarsList() {
-  const [cars, setCars] = useContext(CarContext);
-  const [showEdit, toggleEdit] = useState(false);
-  const [selectedCar, setSelectedCar] = useState({});
-
-  const showEditForm = (id) => {
-    const carToEdit = cars.find((car) => car.id === id);
-    setSelectedCar(carToEdit);
-    toggleEdit(true);
-  };
-
-  const deleteHandler = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const carsList = cars.filter((car) => car.id !== id);
-        setCars(carsList);
-        Swal.fire("Deleted!", "The selected Car has been deleted.", "success");
-      }
-    });
-
-  };
+  //3- Consuming Context => to get the carsList to map on them
+  const {carsList} = useContext(CarContext);
+  const [cars, setCars] = carsList;
 
   return (
     <>
       <Container className="carsList">
-        {!showEdit && (
           <>
             {cars.map((car) => (
-              <CarCard
-                key={car.id}
-                {...car}
-                showEditForm={showEditForm}
-                deleteHandler={deleteHandler}
-              />
+              <CarCard key={car.id} car={car} />
             ))}
           </>
-        )}
       </Container>
-
-      <div>
-        {showEdit && selectedCar && (
-          <EditCar selectedCar={selectedCar} toggleEdit={toggleEdit} />
-        )}
-      </div>
-
       <Footer/>
-
     </>
   );
 }
-
 ```
 
 - `CarCard.js`
 ```js
-import React from "react";
+import React, { useContext } from "react";
 import Card from "react-bootstrap/Card";
+import { Link } from "react-router-dom";
+import { CarContext } from "./CarContext";
 
-export default function CarCard({
-  id,
-  modelName,
-  brandName,
-  price,
-  manufactureYear,
-  carUrl,
-  showEditForm,
-  deleteHandler,
-}) {
+export default function CarCard({ car }) {
+  //object destructuring => get car's properties
+  const { id, modelName, brandName, price, manufactureYear, carUrl } = car;
+
+  //3- Consuming Context => to set the selected car to update it inside EditCar.js, also call the delete function
+  const { selectedCar, deleteCarHandler } = useContext(CarContext);
+  const [selectCar, setSelectCar] = selectedCar;
+
+  const cardStyle = {
+    width: "18rem",
+    height: "25rem",
+    boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+    textAlign: "center"
+  }
+  
   return (
     <div>
-      <Card
-        style={{
-          width: "18rem",
-          height: "25rem",
-          boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
-          textAlign: "center",
-        }}
-      >
-        
+      <Card style={cardStyle}>
         <div className="img-container">
           <Card.Img variant="top" src={carUrl} className="img" />
           <div className="actions">
-          <i className="fas fa-times" onClick={() => deleteHandler(id)}></i>
-          <i className="far fa-edit" onClick={() => showEditForm(id)}></i>
-        </div>
+            <i className="fas fa-times" onClick={() => deleteCarHandler(id)} />
+            <Link to="/EditCar">
+              <i className="far fa-edit" onClick={() => setSelectCar(car)}></i>
+            </Link>
+          </div>
         </div>
         <Card.Body>
-          <Card.Title>
-            {modelName} | {manufactureYear}
-          </Card.Title>
+          <Card.Title> {modelName} | {manufactureYear} </Card.Title>
           <Card.Text>{brandName}</Card.Text>
-          <Card.Text>
-            {" "}
-            <strong>${price}</strong>
-          </Card.Text>
+          <Card.Text> <strong>${price}</strong> </Card.Text>
         </Card.Body>
       </Card>
     </div>
@@ -387,7 +411,7 @@ export default function CarCard({
 
 - `NewCar.js`
 ```js
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { CarContext } from "./CarContext";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
@@ -395,329 +419,246 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { v4 as uuidv4 } from "uuid";
-import Swal from "sweetalert2";
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Footer from "./Footer";
+import { useForm } from 'react-hook-form'
 
+function NewCar() {
 
-function NewCar(props) {
-  const [car, setCar] = useState({});
+  const history = useHistory()
 
-  const [cars, setCars] = useContext(CarContext);
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+    mode: "onBlur"
+  })
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  //3- Consuming Context => to add new car
+  const {newCarHandler} = useContext(CarContext);
 
-    setCar({
-      ...car,
-      id: uuidv4(),
-      [name]: value,
-    });
+  const onSubmit = (data) => {
+    let newCar = { id: uuidv4(), ...data }
+    // call the function inside CarContext.js
+    newCarHandler(newCar);
+    history.push("/");
   };
 
-  const validate = () => {
-    const modelName = document.getElementById("modelName").value;
-    const brandName = document.getElementById("brandName").value;
-    const manufactureYear = document.getElementById("manufactureYear").value;
-    const price = document.getElementById("price").value;
-    const carUrl = document.getElementById("carUrl").value;
-
-    if (!modelName || !brandName || !manufactureYear || !price || !carUrl) {
-      Swal.fire("Empty", "Some Feilds are empty!", "error");
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (JSON.stringify(car) === "{}") {
-      Swal.fire("Oops!", "You should add the car details first ", "warning");
-    } else {
-      if (validate()) {
-        setCars([car, ...cars]);
-        props.history.push("/");
-        Swal.fire(
-          "Car Added!",
-          "Congratulations your car has been added in our cars list ",
-          "success"
-        );
-      }
-    }
-  };
+  const imgUrl = watch("carUrl")
 
   return (
     <>
-    <Container className="form-container">
-      <Form onSubmit={handleSubmit}>
-      <h3 className="mb-3">Add New Car</h3>
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="4">
-            Model Name{" "}
-          </Form.Label>
-          <Col sm="8">
-            {" "}
-            <Form.Control
-              id="modelName"
-              name="modelName"
-              type="text"
-              placeholder="Enter Model Name"
-              onChange={handleChange}
-            />{" "}
-          </Col>
-        </Form.Group>
+      <Container className="form-container">
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <h3 className="mb-3">Add New Car</h3>
+          <Form.Group as={Row} className="mb-3">
+            <Form.Label column sm="4"> Model Name </Form.Label>
+            <Col sm="8">
+              <Form.Control type="text" placeholder="Enter Model Name"
+                {...register("modelName", {
+                  required: "Model Name is required", minLength: {
+                    value: 2,
+                    message: "minmum of 2 characters"
+                  }
+                })} 
+              />
+              <span>{errors.modelName?.message}</span>
+            </Col>
+          </Form.Group>
 
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="4">
-            Brand Name
-          </Form.Label>
-          <Col sm="8">
-            {" "}
-            <Form.Control
-              id="brandName"
-              name="brandName"
-              type="text"
-              placeholder="Enter Brand Name"
-              onChange={handleChange}
-            />{" "}
-          </Col>
-        </Form.Group>
+          <Form.Group as={Row} className="mb-3">
+            <Form.Label column sm="4"> Brand Name </Form.Label>
+            <Col sm="8">
+              <Form.Control type="text" placeholder="Enter Brand Name"
+                {...register("brandName", {
+                  required: " Brand Name is required", minLength: {
+                    value: 3,
+                    message: "minmum of 3 characters"
+                  }
+                })}
+              />
+              <span>{errors.brandName?.message}</span>
+            </Col>
+          </Form.Group>
 
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="4">
-            Manufacture Year
-          </Form.Label>
-          <Col sm="8">
-            {" "}
-            <Form.Control
-              id="manufactureYear"
-              name="manufactureYear"
-              type="text"
-              placeholder="Enter Manufacture Year"
-              onChange={handleChange}
-            />{" "}
-          </Col>
-        </Form.Group>
+          <Form.Group as={Row} className="mb-3">
+            <Form.Label column sm="4"> Manufacture Year </Form.Label>
+            <Col sm="8">
+              <Form.Control type="text" placeholder="Enter Manufacture Year"
+                {...register("manufactureYear", {
+                  required: " Manufacture Year is required", minLength: {
+                    value: 4,
+                    message: "minmum of 4 Numbers"
+                  }
+                })}
+              />
+              <span>{errors.manufactureYear?.message}</span>
+            </Col>
+          </Form.Group>
 
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="4">
-            price
-          </Form.Label>
-          <Col sm="8">
-            {" "}
-            <Form.Control
-              id="price"
-              name="price"
-              type="number"
-              placeholder="Enter the price"
-              onChange={handleChange}
-            />{" "}
-          </Col>
-        </Form.Group>
+          <Form.Group as={Row} className="mb-3">
+            <Form.Label column sm="4"> Price </Form.Label>
+            <Col sm="8">
+              <Form.Control type="number" placeholder="Enter the price"
+                {...register("price", {
+                  required: "Price is required", min: {
+                    value: 10000,
+                    message: "minmum of $ 10000"
+                  }
+                })}
+              />
+              <span>{errors.price?.message}</span>
+            </Col>
+          </Form.Group>
 
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="4">
-            Image Url{" "}
-          </Form.Label>
-          <Col sm="8">
-            {" "}
-            <Form.Control
-              id="carUrl"
-              name="carUrl"
-              type="url"
-              placeholder="Enter the Car Image Url"
-              onChange={handleChange}
-            />{" "}
-          </Col>
-        </Form.Group>
+          <Form.Group as={Row} className="mb-3">
+            <Form.Label column sm="4"> Image URL </Form.Label>
+            <Col sm="8">
+              <Form.Control type="url" placeholder="Enter the Car Image Url"
+                {...register("carUrl", { required: "Car's Image is required" })}
+              />
+              <span>{errors.carUrl?.message}</span>
+            </Col>
+          </Form.Group>
 
-        <Button variant="primary" type="submit" className="mt-3 me-3">
-          Add Car
-        </Button>
-        <Button variant="secondary" onClick={() => props.history.push('/')} className="mt-3 ">
-          Cancel
-        </Button>
-      </Form>
-      <img src={car.carUrl ? car.carUrl : 'https://www.freeiconspng.com/thumbs/car-icon-png/vehicle-icon-png-car-sedan-4.png' } width="400" height="300"/>
-    </Container>
-    <Footer/>
-
+          <Button variant="primary" type="submit" className="mt-3 me-3"> Add Car </Button>
+          <Button variant="secondary" onClick={() => history.push('/')} className="mt-3 "> Cancel </Button>
+        </Form>
+        <img src={imgUrl ? imgUrl : 'https://www.freeiconspng.com/thumbs/car-icon-png/vehicle-icon-png-car-sedan-4.png'} width="400" height="300" alt="default" />
+      </Container>
+      <Footer />
     </>
-    
   );
 }
 
-export default withRouter(NewCar)
+export default NewCar;
 ```
 
 - `EditCar.js`
 ```js
-import React, { useState, useContext } from "react";
+
+import React, { useContext } from "react";
 import { CarContext } from "./CarContext";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Swal from "sweetalert2";
+import Button from "react-bootstrap/Button";
+import { useHistory } from 'react-router-dom';
+import Footer from "./Footer";
+import { useForm } from 'react-hook-form'
 
-import { withRouter } from "react-router-dom";
+function EditCar() {
 
-function EditCar(props) {
-  const [car, setCar] = useState(props.selectedCar);
+  const history = useHistory()
 
-  const [cars, setCars] = useContext(CarContext);
+  //3- Consuming Context => to get the selected car and updated it
+  const {selectedCar, updateCarHandler} = useContext(CarContext);
+  const [selectCar, setSelectCar] = selectedCar;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCar({
-      ...car,
-      [name]: value,
-    });
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+    defaultValues:{
+      modelName: selectCar.modelName,
+      brandName: selectCar.brandName,
+      manufactureYear: selectCar.manufactureYear,
+      price: selectCar.price,
+      carUrl: selectCar.carUrl
+    },
+    mode: "onBlur"
+  })
+
+  const onSubmit = (data) => {
+    let updatedCar = { id: selectCar.id, ...data }
+    // call the function inside CarContext.js
+    updateCarHandler(updatedCar);
+    history.push("/");
   };
 
-  const validate = () => {
-    const modelName = document.getElementById("modelName").value;
-    const brandName = document.getElementById("brandName").value;
-    const manufactureYear = document.getElementById("manufactureYear").value;
-    const price = document.getElementById("price").value;
-    const carUrl = document.getElementById("carUrl").value;
+  const imgUrl = watch("carUrl")
 
-    if (!modelName || !brandName || !manufactureYear || !price || !carUrl) {
-      Swal.fire("Empty", "Some Feilds are empty!", "error");
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (JSON.stringify(car) === "{}") {
-      Swal.fire("Oops!", "You should add the car details first ", "warning");
-    } else {
-      if (validate()) {
-        const filterdCars = cars.filter(
-          (filterdCar) => filterdCar.id !== car.id
-        );
-
-        setCars([car, ...filterdCars]);
-        props.toggleEdit(false)
-        props.history.push("/");
-
-        Swal.fire(
-          "Car Edited!",
-          "Congratulations your car has been Edited successfully ",
-          "success"
-        );
-      }
-    }
-  };
   return (
-    <Container className="form-container">
-      <Form onSubmit={handleSubmit}>
-      <h3 className="mb-3">Edit Car</h3>
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="4">
-            Model Name{" "}
-          </Form.Label>
-          <Col sm="8">
-            {" "}
-            <Form.Control
-              id="modelName"
-              name="modelName"
-              type="text"
-              value={car.modelName}
-              placeholder="Enter Model Name"
-              onChange={handleChange}
-            />{" "}
-          </Col>
-        </Form.Group>
+    <>
+      <Container className="form-container">
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <h3 className="mb-3">Edit Car</h3>
+          <Form.Group as={Row} className="mb-3">
+            <Form.Label column sm="4"> Model Name </Form.Label>
+            <Col sm="8">
+              <Form.Control type="text" placeholder="Enter Model Name"
+                {...register("modelName", {
+                  required: "Model Name is required", minLength: {
+                    value: 2,
+                    message: "minmum of 2 characters"
+                  }
+                })} 
+              />
+              <span>{errors.modelName?.message}</span>
+            </Col>
+          </Form.Group>
 
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="4">
-            Brand Name
-          </Form.Label>
-          <Col sm="8">
-            {" "}
-            <Form.Control
-              id="brandName"
-              name="brandName"
-              type="text"
-              value={car.brandName}
-              placeholder="Enter Brand Name"
-              onChange={handleChange}
-            />{" "}
-          </Col>
-        </Form.Group>
+          <Form.Group as={Row} className="mb-3">
+            <Form.Label column sm="4"> Brand Name </Form.Label>
+            <Col sm="8">
+              <Form.Control type="text" placeholder="Enter Brand Name"
+                {...register("brandName", {
+                  required: " Brand Name is required", minLength: {
+                    value: 3,
+                    message: "minmum of 3 characters"
+                  }
+                })}
+              />
+              <span>{errors.brandName?.message}</span>
+            </Col>
+          </Form.Group>
 
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="4">
-            Manufacture Year
-          </Form.Label>
-          <Col sm="8">
-            {" "}
-            <Form.Control
-              id="manufactureYear"
-              name="manufactureYear"
-              type="text"
-              value={car.manufactureYear}
-              placeholder="Enter Manufacture Year"
-              onChange={handleChange}
-            />{" "}
-          </Col>
-        </Form.Group>
+          <Form.Group as={Row} className="mb-3">
+            <Form.Label column sm="4"> Manufacture Year </Form.Label>
+            <Col sm="8">
+              <Form.Control type="text" placeholder="Enter Manufacture Year"
+                {...register("manufactureYear", {
+                  required: " Manufacture Year is required", minLength: {
+                    value: 4,
+                    message: "minmum of 4 Numbers"
+                  }
+                })}
+              />
+              <span>{errors.manufactureYear?.message}</span>
+            </Col>
+          </Form.Group>
 
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="4">
-            price
-          </Form.Label>
-          <Col sm="8">
-            {" "}
-            <Form.Control
-              id="price"
-              name="price"
-              type="number"
-              value={car.price}
-              placeholder="Enter the price"
-              onChange={handleChange}
-            />{" "}
-          </Col>
-        </Form.Group>
+          <Form.Group as={Row} className="mb-3">
+            <Form.Label column sm="4"> Price </Form.Label>
+            <Col sm="8">
+              <Form.Control type="number" placeholder="Enter the price"
+                {...register("price", {
+                  required: "Price is required", min: {
+                    value: 10000,
+                    message: "minmum of $ 10000"
+                  }
+                })}
+              />
+              <span>{errors.price?.message}</span>
+            </Col>
+          </Form.Group>
 
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="4">
-            Image Url{" "}
-          </Form.Label>
-          <Col sm="8">
-            {" "}
-            <Form.Control
-              id="carUrl"
-              name="carUrl"
-              type="url"
-              value={car.carUrl}
-              placeholder="Enter the Car Image Url"
-              onChange={handleChange}
-            />{" "}
-          </Col>
-        </Form.Group>
+          <Form.Group as={Row} className="mb-3">
+            <Form.Label column sm="4"> Image URL </Form.Label>
+            <Col sm="8">
+              <Form.Control type="url" placeholder="Enter the Car Image Url"
+                {...register("carUrl", { required: "Car's Image is required" })}
+              />
+              <span>{errors.carUrl?.message}</span>
+            </Col>
+          </Form.Group>
 
-        <Button variant="primary" type="submit" className="mt-3 me-3">
-          Edit Car
-        </Button>
-        <Button variant="secondary" onClick={() => props.toggleEdit(false)} className="mt-3">
-          Cancel
-        </Button>
-      </Form>
-      <img src={car.carUrl ? car.carUrl : 'https://www.freeiconspng.com/thumbs/car-icon-png/vehicle-icon-png-car-sedan-4.png' } width="400" height="300"/>
-    </Container>
+          <Button variant="primary" type="submit" className="mt-3 me-3"> Edit Car</Button>
+          <Button variant="secondary" onClick={() => history.push('/')} className="mt-3 "> Cancel </Button>
+        </Form>
+        <img src={imgUrl ? imgUrl : 'https://www.freeiconspng.com/thumbs/car-icon-png/vehicle-icon-png-car-sedan-4.png'} width="400" height="300" alt="default"/>
+      </Container>
+      <Footer />
+    </>
   );
 }
 
-export default withRouter(EditCar);
+export default EditCar;
 
 ```
 - `Footer.js`
@@ -743,7 +684,7 @@ export default Footer;
 
 - `App.css`
 ```css
-body {
+]body {
   background-color: rgb(237, 241, 247) !important;
 }
 
@@ -793,6 +734,12 @@ a:hover {
 
 .form-container Button {
   width: 20em;
+}
+
+.form-container span {
+  color: rgb(184, 19, 19);
+  font-size: small;
+  text-align: left;
 }
 
 .form-container img {
@@ -858,12 +805,12 @@ a:hover {
 <hr>
 
 Additional Resources:
-
+- [React Hook Form](https://react-hook-form.com/)
 - [Context](https://reactjs.org/docs/context.html)
 - [uuid](https://github.com/uuidjs/uuid#readme)
 - [sweetalert2](https://sweetalert2.github.io/#download)
-
 - [react bootstrap](https://react-bootstrap.netlify.app/)
+- [REACT ROUTER V5](https://v5.reactrouter.com/)
 
 
 
