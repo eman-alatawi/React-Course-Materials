@@ -58,7 +58,6 @@ const Main = () => {
 ![car-crud-4](./images/car-4.png)
 ![car-crud-5](./images/car-5.png)
 ![car-crud-6](./images/car-6.png)
-![car-crud-7](./images/car-7.png)
 ![car-crud-8](./images/car-8.png)
 ![car-crud-9](./images/car-9.png)
 ![car-crud-10](./images/car-10.png)
@@ -684,7 +683,7 @@ export default Footer;
 
 - `App.css`
 ```css
-]body {
+body {
   background-color: rgb(237, 241, 247) !important;
 }
 

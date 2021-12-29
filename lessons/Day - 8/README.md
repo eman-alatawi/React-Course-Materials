@@ -202,13 +202,20 @@ export default App;
 } 
 ```
 
+## Homework (Optional)
+
+Make a react app with the following requirements:
+- Use Context API for state management
+- Use any of the public APIs to fetch data
+- Minimum css
+- Use npm packages needed to help you
+
 <hr>
 
 Additional Resources:
-
+- [Public API ](https://github.com/public-apis/public-apis)
 - [Styled Components ](https://styled-components.com/)
 - [picsum.photos API](https://picsum.photos/)
-- [Public API ](https://github.com/public-apis/public-apis)
 - [Fetch API Article](https://medium.com/@9cv9official/what-are-get-post-put-patch-delete-a-walkthrough-with-javascripts-fetch-api-17be31755d28)
 
 - [uigradients](https://uigradients.com/#CrimsonTide)
