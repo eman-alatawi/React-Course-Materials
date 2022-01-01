@@ -107,8 +107,6 @@ const ImageSlider = styled.div`
 const Wrapper = styled.div`
   height: 100%;
   display: flex;
-  transition: all 1.5s ease;
-  transform: translateX(${(props) => props.slideIndex * 100}vw);
 `;
 
 const ImageContainer = styled.div`
@@ -134,26 +132,29 @@ function App() {
   const [photos, setPhotos] = useState([]);
 
   useEffect(() => {
+
+    const fetchPhotos = () => {
+      // axios
+      //   .get("https://picsum.photos/v2/list")
+      //   .then((res) => {
+      //     setPhotos(res.data);
+      //     console.log(res.data);
+      //   })
+      //   .catch((err) => console.log(err));
+  
+      fetch("https://picsum.photos/v2/list")
+      .then(res => res.json())
+      .then(res =>{
+        console.log(res)
+        setPhotos(res)
+      })
+      .catch(err => console.log(err))
+    };
+
     fetchPhotos();
   }, []);
 
-  const fetchPhotos = () => {
-    // axios
-    //   .get("https://picsum.photos/v2/list")
-    //   .then((res) => {
-    //     setPhotos(res.data);
-    //     console.log(res.data);
-    //   })
-    //   .catch((err) => console.log(err));
-
-    fetch("https://picsum.photos/v2/list")
-    .then(res => res.json())
-    .then(res =>{
-      console.log(res)
-      setPhotos(res)
-    })
-    .catch(err => console.log(err))
-  };
+  
 
   return (
     <div className="App">
@@ -175,6 +176,7 @@ function App() {
 }
 
 export default App;
+
 
 ```
 
